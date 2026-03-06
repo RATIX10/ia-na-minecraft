@@ -1,31 +1,94 @@
 <!DOCTYPE html>
 <html lang="sk">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Texture AI Generator</title>
     <style>
-        body { background-color: #2c2c2c; color: #fff; font-family: 'Courier New', monospace; padding: 20px; }
-        .container { border: 4px solid #555; padding: 20px; max-width: 500px; background: #333; }
-        select, input, button { display: block; width: 100%; margin: 10px 0; padding: 10px; }
-        button { background-color: #2ecc71; border: none; cursor: pointer; font-weight: bold; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background-color: #2d2d2d;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 { color: #38e038; margin-bottom: 10px; }
+        select, input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+        select, input { background: #444; color: white; }
+        button {
+            background-color: #38e038;
+            color: #1a1a1a;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { background-color: #2dbd2d; }
+        #result-container {
+            margin-top: 20px;
+            display: none;
+        }
+        #texture-preview {
+            width: 256px;
+            height: 256px;
+            border: 4px solid #38e038;
+            image-rendering: pixelated; /* Dôležité pre MC vzhľad */
+            background-color: #000;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #38e038;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>Minecraft Texture AI</h2>
-    <label>Vyber typ:</label>
+    <h1>MC Texture AI</h1>
+    <p>Vyber si kategóriu a popíš vzhľad:</p>
+
     <select id="type">
-        <option value="block">Blok (16x16)</option>
-        <option value="item">Predmet (Tool/Item)</option>
-        <option value="mob">Mob/Entita</option>
+        <option value="block">Blok (Block)</option>
+        <option value="item">Predmet (Item)</option>
+        <option value="armor">Brnenie (Armor)</option>
+        <option value="mob">Mob</option>
     </select>
+
+    <input type="text" id="prompt" placeholder="Napr. modrý žiariaci diamantový meč...">
     
-    <label>Popis (napr. "diamantový meč s ohňom"):</label>
-    <input type="text" id="prompt" placeholder="Zadaj čo chceš...">
-    
-    <button onclick="generateTexture()">Vygenerovať</button>
-    
-    <div id="result" style="margin-top:20px; text-align:center;">
-        <img id="output" src="" alt="Tu sa objaví tvoja textúra" style="display:none; image-rendering: pixelated; width: 128px; height: 128px;">
+    <button onclick="generateTexture()">Generovať textúru</button>
+
+    <div class="loader" id="loader"></div>
+
+    <div id="result-container">
+        <h3>Tvoja textúra:</h3>
+        <img id="texture-preview" src="" alt="Vygenerovaná textúra">
+        <br>
+        <button style="background: #555; color: white;" onclick="downloadImage()">Stiahnuť .png</button>
     </div>
 </div>
 
@@ -33,11 +96,38 @@
     function generateTexture() {
         const type = document.getElementById('type').value;
         const prompt = document.getElementById('prompt').value;
-        
-        // Tu by bola logika pre volanie API (napr. OpenAI DALL-E)
-        console.log("Generujem:", type, "pre:", prompt);
-        
-        alert("Tu by prebehlo prepojenie na API. Bez API kľúča a backendu obrázok nevygenerujeme.");
+        const loader = document.getElementById('loader');
+        const result = document.getElementById('result-container');
+        const preview = document.getElementById('texture-preview');
+
+        if (!prompt) {
+            alert("Prosím, napíš, čo chceš vytvoriť!");
+            return;
+        }
+
+        // Simulácia načítania AI
+        loader.style.display = "block";
+        result.style.display = "none";
+
+        setTimeout(() => {
+            loader.style.display = "none";
+            result.style.display = "block";
+            
+            /* POZNÁMKA: Tu by sa volalo API (napr. DALL-E). 
+               Pre demo účely používame placeholder z generátora obrázkov.
+            */
+            const fakeImageUrl = `https://picsum.photos/seed/${prompt.length + Math.random()}/256/256`;
+            preview.src = fakeImageUrl;
+
+            console.log(`Generujem ${type} na tému: ${prompt}`);
+        }, 2000);
+    }
+
+    function downloadImage() {
+        const link = document.createElement('a');
+        link.download = 'mc_texture.png';
+        link.href = document.getElementById('texture-preview').src;
+        link.click();
     }
 </script>
 
